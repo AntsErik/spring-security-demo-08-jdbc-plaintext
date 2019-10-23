@@ -52,39 +52,46 @@ public class DemoAppConfig {
 
         //set the jdbc driver class
         try {
-            securityDataSource.setDriverClass( env.getProperty( "jdbc.driver" ) ); //jdbc.driver - reads db configs from the properties file
+            securityDataSource.setDriverClass( env.getProperty( "jdbc.driver" ) );
         }
         catch( PropertyVetoException exc ) {
             throw new RuntimeException( exc );
         }
 
         //log some of the connection properties
-        logger.info( "===>>>> jdbc url=" + env.getProperty( "jdbc.url" ) );
-        logger.info( "===>>>> jdbc user=" + env.getProperty( "jdbc.user" ) );
+        logger.info( ">>> jdbc.url=" + env.getProperty( "jdbc.url" ) );
+        logger.info( ">>> jdbc.user=" + env.getProperty( "jdbc.user" ) );
 
         //setupp the database connection props
         securityDataSource.setJdbcUrl( env.getProperty( "jdbc.url" ) );
-        securityDataSource.setUser( env.getProperty( "user.url" ) );
-        securityDataSource.setPassword( env.getProperty( "password.url" ) );
+        securityDataSource.setUser( env.getProperty( "jdbc.user" ) );
+        securityDataSource.setPassword( env.getProperty( "jdbc.password" ) );
 
         //finally set up connection pool properties
         //securityDataSource.setInitialPoolSize( initialPoolSize );
-        securityDataSource.setInitialPoolSize( getIntProperty( "connection.pool.initialPoolsize" ) );
-        securityDataSource.setMinPoolSize( getIntProperty( "connection.pool.initialPoolsize" ) );
-        securityDataSource.setMaxPoolSize( getIntProperty( "connection.pool.initialPoolsize" ) );
-        securityDataSource.setMaxIdleTime( getIntProperty( "connection.pool.initialPoolsize" ) );
+        securityDataSource.setInitialPoolSize(
+            getIntProperty( "connection.pool.initialPoolSize" ) );
+
+        securityDataSource.setMinPoolSize(
+            getIntProperty( "connection.pool.minPoolSize" ) );
+
+        securityDataSource.setMaxPoolSize(
+            getIntProperty( "connection.pool.maxPoolSize" ) );
+
+        securityDataSource.setMaxIdleTime(
+            getIntProperty( "connection.pool.maxIdleTime" ) );
 
         return securityDataSource;
     }
 
     //need a helper method for parsing - read environment property and convert to int
-    private int getIntProperty( String propertyName ){
+    private int getIntProperty( String propName ){
 
-        String propertyValue = env.getProperty( propertyName );
+        String propVal = env.getProperty( propName );
 
-        //now convert to int
-        int intPropertyValue = Integer.parseInt( propertyValue );
+        // now convert to int
+        int intPropVal = Integer.parseInt( propVal );
 
-        return intPropertyValue;
+        return intPropVal;
     }
 }

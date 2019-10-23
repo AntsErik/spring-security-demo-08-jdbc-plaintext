@@ -1,28 +1,27 @@
 package ee.praktika.springsecurity.demo.config;
 
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.User.UserBuilder;
 
 @Configuration
 @EnableWebSecurity
 public class DemoSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    //add a reference to our security data source
+    @Autowired
+    private DataSource securityDataSource;
+
     @Override
     protected void configure( AuthenticationManagerBuilder auth ) throws Exception{
 
-        //add users to in memory authentication
-
-        UserBuilder users = User.withDefaultPasswordEncoder();
-
-        auth.inMemoryAuthentication()
-            .withUser( users.username( "Liliana" ).password( "MTG247" ).roles( "PLAINSWALKER", "CREATURE" ) )
-            .withUser( users.username( "Ugin" ).password( "MTG247" ).roles( "DRAGON", "PLAINSWALKER", "CREATURE" ) )
-            .withUser( users.username( "Suntail Hawk" ).password( "MTG247" ).roles( "CREATURE", "BIRD" ) );
+        //use jdbc authentication
+        auth.jdbcAuthentication().dataSource( securityDataSource ); //Telling Spring Security to use JDBC authentication with our data source, no hard coding users!
     }
 
     @Override
